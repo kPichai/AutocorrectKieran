@@ -1,9 +1,9 @@
 Name: YOUR NAME HERE
 
-| Date    |  Time  |                                     Update |
-|:--------|:------:|-------------------------------------------:|
-| April 5 | 9-10pm | I tried to write abstract, efficient code. |
-|         |        |                                            |
+| Date    |       Time        |                                                                                                                                                                                                                                                                                                                                                                                                                                        Update |
+|:--------|:-----------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| March 5 | 10:55am - 11:55am |                                                                                                         During this class the problem set was introduced and we began to discuss various solutions to the edit distance idea. Most of which seemed to have exponential time and required a lot of calculations. However, towards the end we realized their may have been a better (dynamic programming) appraoch to the edit distance method. |
+| March 7 |  8:50am - 9:55am  | During this session we got up onto the boards and drew out some examples for the edit distance. One idea I had to increase the efficiency of the code was to do a prefix search of maybe 3 layers down or something which would allow us to terminate word generation paths well before the time complexity increases heavily of those. Additionally, there may have been a way to relate edit distance and LCS which Landon described to us. |
 
 
 To add a new row to the table, click into a cell and then hit shift-enter.
