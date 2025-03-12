@@ -25,13 +25,16 @@ public class Autocorrect {
      * Runs a test from the tester file, AutocorrectTester.
      * @param typed The (potentially) misspelled word, provided by the user.
      * @return An array of all dictionary words with an edit distance less than or equal
-     * to threshold, sorted by edit distnace, then sorted alphabetically.
+     * to threshold, sorted by edit distance, then sorted alphabetically.
      */
     public String[] runTest(String typed) {
 
         return new String[0];
     }
 
+    private int calculateEditDistance(String a, String b) {
+        int[][] levDist = new int[a.length() + 1][b.length() + 1];
+    }
 
     /**
      * Loads a dictionary of words from the provided textfiles in the dictionaries directory.
