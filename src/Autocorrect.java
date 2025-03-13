@@ -17,8 +17,15 @@ public class Autocorrect {
      * @param words The dictionary of acceptable words.
      * @param threshold The maximum number of edits a suggestion can have.
      */
-    public Autocorrect(String[] words, int threshold) {
+//    public Autocorrect(String[] words, int threshold) {
+//
+//    }
 
+    public static void main(String[] args) {
+        Autocorrect a = new Autocorrect();
+        System.out.println(a.calculateEditDistance("act", "cat"));
+        System.out.println(a.calculateEditDistance("room", "rooom"));
+        System.out.println(a.calculateEditDistance("toward", "twrd"));
     }
 
     /**
@@ -32,8 +39,30 @@ public class Autocorrect {
         return new String[0];
     }
 
-    private int calculateEditDistance(String a, String b) {
+    public int calculateEditDistance(String a, String b) {
         int[][] levDist = new int[a.length() + 1][b.length() + 1];
+
+        for (int i = 1; i <= a.length(); i++) {
+            levDist[i][0] = i;
+        }
+        for (int j = 1; j <= b.length(); j++) {
+            levDist[0][j] = j;
+        }
+
+        for (int i = 1; i <= a.length(); i++) {
+            for (int j = 1; j <= b.length(); j++) {
+                if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                    levDist[i][j] = levDist[i - 1][j - 1];
+                } else {
+                    int delete = levDist[i - 1][j];
+                    int insert = levDist[i][j - 1];
+                    int substitute = levDist[i - 1][j - 1];
+                    levDist[i][j] = 1 + Math.min(Math.min(delete, insert), substitute);
+                }
+            }
+        }
+
+        return levDist[a.length()][b.length()];
     }
 
     /**
