@@ -25,7 +25,7 @@ public class Autocorrect {
      */
     public Autocorrect(String[] words, int threshold) {
         nGrams = new ArrayList[modulus];
-
+        fillNGramArray(words);
     }
 
     public static void main(String[] args) {
@@ -46,23 +46,23 @@ public class Autocorrect {
     }
 
     private String[] suggestCorrections(String inputWord, int maxDistance) {
-//        ArrayList<String> candidateWords = new ArrayList<>();
-//        for (int i = 0; i <= inputWord.length() - ngramSize; i++) {
-//            String ngram = inputWord.substring(i, i + ngramSize);
-//            int hash = calculateRabinKarpHash(ngram);
-//            for (String word : nGrams.get(hash)) {
-//                candidateWords.add(word);
-//            }
-//        }
-//
-//        ArrayList<String> suggestions = new ArrayList<>();
-//        for (String candidate : candidateWords) {
-//            if (calculateEditDistance(inputWord, candidate) <= maxDistance) {
-//                suggestions.add(candidate);
-//            }
-//        }
-//
-//        return suggestions.toArray(new String[0]);
+        ArrayList<String> candidateWords = new ArrayList<>();
+        for (int i = 0; i <= inputWord.length() - ngramSize; i++) {
+            String ngram = inputWord.substring(i, i + ngramSize);
+            int hash = calculateRabinKarpHash(ngram);
+            for (String word : nGrams[hash]) {
+                candidateWords.add(word);
+            }
+        }
+
+        ArrayList<String> suggestions = new ArrayList<>();
+        for (String candidate : candidateWords) {
+            if (calculateEditDistance(inputWord, candidate) <= maxDistance) {
+                suggestions.add(candidate);
+            }
+        }
+
+        return suggestions.toArray(new String[0]);
     }
 
     public int calculateEditDistance(String a, String b) {
@@ -92,11 +92,24 @@ public class Autocorrect {
     }
 
     private int calculateRabinKarpHash(String text) {
-        long hash = 0;
+        int hash = 0;
         for (int i = 0; i < text.length(); i++) {
             hash = (hash * base + text.charAt(i)) % modulus;
         }
         return hash;
+    }
+
+    private void fillNGramArray(String[] dictionary) {
+        for (String word : dictionary) {
+            for (int i = 0; i <= word.length() - ngramSize; i++) {
+                String ngram = word.substring(i, i + ngramSize);
+                int hash = calculateRabinKarpHash(ngram);
+                if (nGrams[hash] == null) {
+                    nGrams[hash] = new ArrayList<>();
+                }
+                nGrams[hash].add(word);
+            }
+        }
     }
 
     /**
