@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Autocorrect
@@ -12,20 +13,26 @@ import java.io.IOException;
  */
 public class Autocorrect {
 
+    private final int ngramSize = 3; // Default n-gram size
+    private int base = 256;
+    private int modulus = 50021;
+    private ArrayList<String>[] nGrams;
+
     /**
      * Constucts an instance of the Autocorrect class.
      * @param words The dictionary of acceptable words.
      * @param threshold The maximum number of edits a suggestion can have.
      */
-//    public Autocorrect(String[] words, int threshold) {
-//
-//    }
+    public Autocorrect(String[] words, int threshold) {
+        nGrams = new ArrayList[modulus];
+
+    }
 
     public static void main(String[] args) {
-        Autocorrect a = new Autocorrect();
-        System.out.println(a.calculateEditDistance("act", "cat"));
-        System.out.println(a.calculateEditDistance("room", "rooom"));
-        System.out.println(a.calculateEditDistance("toward", "twrd"));
+        Autocorrect a = new Autocorrect(loadDictionary("large"), 4);
+//        System.out.println(a.calculateEditDistance("act", "cat"));
+//        System.out.println(a.calculateEditDistance("room", "rooom"));
+//        System.out.println(a.calculateEditDistance("toward", "twrd"));
     }
 
     /**
@@ -35,8 +42,27 @@ public class Autocorrect {
      * to threshold, sorted by edit distance, then sorted alphabetically.
      */
     public String[] runTest(String typed) {
-
         return new String[0];
+    }
+
+    private String[] suggestCorrections(String inputWord, int maxDistance) {
+//        ArrayList<String> candidateWords = new ArrayList<>();
+//        for (int i = 0; i <= inputWord.length() - ngramSize; i++) {
+//            String ngram = inputWord.substring(i, i + ngramSize);
+//            int hash = calculateRabinKarpHash(ngram);
+//            for (String word : nGrams.get(hash)) {
+//                candidateWords.add(word);
+//            }
+//        }
+//
+//        ArrayList<String> suggestions = new ArrayList<>();
+//        for (String candidate : candidateWords) {
+//            if (calculateEditDistance(inputWord, candidate) <= maxDistance) {
+//                suggestions.add(candidate);
+//            }
+//        }
+//
+//        return suggestions.toArray(new String[0]);
     }
 
     public int calculateEditDistance(String a, String b) {
@@ -63,6 +89,14 @@ public class Autocorrect {
         }
 
         return levDist[a.length()][b.length()];
+    }
+
+    private int calculateRabinKarpHash(String text) {
+        long hash = 0;
+        for (int i = 0; i < text.length(); i++) {
+            hash = (hash * base + text.charAt(i)) % modulus;
+        }
+        return hash;
     }
 
     /**
