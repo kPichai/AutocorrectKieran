@@ -40,7 +40,7 @@ public class Autocorrect {
         String input = sc.nextLine();
         String[] corrections;
         while (!input.equals("")) {
-            a.threshold = Math.max(input.length() / 3, 1);
+            a.threshold = Math.max(input.length() / 4, 1);
 
             corrections = a.runTest(input);
             for (String word : corrections) {
@@ -49,9 +49,6 @@ public class Autocorrect {
             System.out.println("Enter the next word:");
             input = sc.nextLine();
         }
-//        System.out.println(a.calculateEditDistance("act", "cat"));
-//        System.out.println(a.calculateEditDistance("room", "roooom"));
-//        System.out.println(a.calculateEditDistance("toward", "twrd"));
     }
 
     /**
@@ -69,9 +66,8 @@ public class Autocorrect {
         if (inputWord.length() <= 3) {
             candidateWords = shortWords;
         } else {
-            for (int i = 0; i <= inputWord.length() - ngramSize; i++) {
-                String ngram = inputWord.substring(i, i + ngramSize);
-                int hash = calculateRabinKarpHash(ngram);
+            ArrayList<Integer> inputHashes = generateHashes(inputWord);
+            for (int hash : inputHashes) {
                 if (nGrams[hash] == null) {
                     continue;
                 }
@@ -94,6 +90,33 @@ public class Autocorrect {
         Collections.sort(suggestions);
 
         return suggestions.toArray(new String[0]);
+    }
+
+    public ArrayList<Integer> generateHashes(String word) {
+        ArrayList<Integer> hashes = new ArrayList<>();
+        int currentHash = 0;
+
+        if (word.length() < ngramSize) {
+            return hashes;
+        }
+
+        for (int i = 0; i < ngramSize; i++) {
+            currentHash = (currentHash * base + word.charAt(i)) % modulus;
+        }
+        hashes.add(currentHash);
+
+        int power = 1;
+        for (int i = 0; i < ngramSize - 1; i++) {
+            power = (power * base) % modulus;
+        }
+        for (int i = 1; i <= word.length() - ngramSize; i++) {
+            currentHash = (currentHash - (word.charAt(i - 1) * power) % modulus + modulus) % modulus;
+            currentHash = (currentHash * base) % modulus;
+            currentHash = (currentHash + word.charAt(i + ngramSize - 1)) % modulus;
+            hashes.add(currentHash);
+        }
+
+        return hashes;
     }
 
     private int calculateEditDistance(String a, String b) {
@@ -122,24 +145,16 @@ public class Autocorrect {
         return levDist[a.length()][b.length()];
     }
 
-    private int calculateRabinKarpHash(String text) {
-        int hash = 0;
-        for (int i = 0; i < text.length(); i++) {
-            hash = (hash * base + text.charAt(i)) % modulus;
-        }
-        return hash;
-    }
-
     private void fillNGramArray(String[] dictionary) {
         for (String word : dictionary) {
-            for (int i = 0; i <= word.length() - ngramSize; i++) {
-                String ngram = word.substring(i, i + ngramSize);
-                int hash = calculateRabinKarpHash(ngram);
-                // Use previous ngrams to make calculation more efficent
+            ArrayList<Integer> hashes = generateHashes(word);
+            for (int hash : hashes) {
                 if (nGrams[hash] == null) {
-                    nGrams[hash] = new ArrayList<>();
+                    nGrams[hash] = new ArrayList<String>();
                 }
-                nGrams[hash].add(word);
+                if (!nGrams[hash].contains(word)) {
+                    nGrams[hash].add(word);
+                }
             }
             if (word.length() <= 4) {
                 shortWords.add(word);
